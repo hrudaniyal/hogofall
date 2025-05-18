@@ -14,7 +14,7 @@ const About = () => {
               individuals to achieve their goals.
             </p>
             <p className="text-[var(--color-eerie-black)] text-lg">
-              With years of experience in the industry , we have helped countless
+              With years of experience in the industry we have helped countless
               clients transform their ideas into reality. Our commitment to
               excellence and customer satisfaction sets us apart.
             </p>
