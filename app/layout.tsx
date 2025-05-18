@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { poppins } from "./fonts";
 import "./globals.css";
 import Header from "./Component/Header";
+import Footer from "./Component/Footer";
 
 export const metadata: Metadata = {
   title: "Hogenakkal Boat Services",
@@ -20,6 +21,7 @@ export default function RootLayout({
         <Header />
         {children}
       </body>
+      <Footer />
     </html>
   );
 }
