@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import ScrollAnimation from "./ScrollAnimation";
 
 const containerStyle = {
@@ -37,6 +37,23 @@ const mapOptions = {
 };
 
 const PlanYourVisit = () => {
+  const mapRef = React.useRef<google.maps.Map | null>(null);
+  const [mapError, setMapError] = React.useState<string | null>(null);
+
+  const onLoad = React.useCallback((map: google.maps.Map) => {
+    mapRef.current = map;
+  }, []);
+
+  const onUnmount = React.useCallback(() => {
+    mapRef.current = null;
+  }, []);
+
+  const onError = React.useCallback(() => {
+    setMapError(
+      "Failed to load Google Maps. Please check your API key configuration."
+    );
+  }, []);
+
   return (
     <section className="py-32 bg-[var(--color-night)]">
       <div className="container mx-auto px-4">
@@ -46,7 +63,7 @@ const PlanYourVisit = () => {
           </h2>
         </ScrollAnimation>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div id="planvisit" className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <ScrollAnimation>
             <div className="space-y-8">
               <div className="bg-[var(--color-rich-black)] rounded-xl p-8 shadow-2xl">
@@ -187,18 +204,41 @@ const PlanYourVisit = () => {
                   Location Map
                 </h3>
                 <div className="relative w-full h-[400px] rounded-xl overflow-hidden">
-                  <LoadScript
-                    googleMapsApiKey={
-                      process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""
-                    }
-                  >
-                    <GoogleMap
-                      mapContainerStyle={containerStyle}
-                      center={center}
-                      zoom={15}
-                      options={mapOptions}
-                    ></GoogleMap>
-                  </LoadScript>
+                  {!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? (
+                    <div className="w-full h-full flex items-center justify-center bg-[var(--color-rich-black)] text-white">
+                      <p>
+                        Google Maps API key is not configured. Please add your
+                        API key to .env.local file.
+                      </p>
+                    </div>
+                  ) : (
+                    <LoadScript
+                      googleMapsApiKey={
+                        process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+                      }
+                      onError={onError}
+                    >
+                      {mapError ? (
+                        <div className="w-full h-full flex items-center justify-center bg-[var(--color-rich-black)] text-white">
+                          <p>{mapError}</p>
+                        </div>
+                      ) : (
+                        <GoogleMap
+                          mapContainerStyle={containerStyle}
+                          center={center}
+                          zoom={15}
+                          options={mapOptions}
+                          onLoad={onLoad}
+                          onUnmount={onUnmount}
+                        >
+                          <Marker
+                            position={center}
+                            title="Hogenakkal Boating"
+                          />
+                        </GoogleMap>
+                      )}
+                    </LoadScript>
+                  )}
                 </div>
                 <div className="mt-4 text-center">
                   <a

@@ -114,6 +114,7 @@ const BoatingPackages = () => {
                     src={pkg.image}
                     alt={pkg.title}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                     className="object-cover"
                   />
                 </div>
